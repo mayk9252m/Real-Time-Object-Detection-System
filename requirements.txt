@@ -1,0 +1,16 @@
+ultralytics>=8.2.0
+opencv-python>=4.9.0
+numpy>=1.26.0
+onnx>=1.16.0
+onnxruntime-gpu>=1.17.0   # swap for onnxruntime (CPU) if no GPU/edge accelerator
+onnxsim>=0.4.36
+PyYAML>=6.0
+tqdm>=4.66.0
+matplotlib>=3.8.0
+pandas>=2.2.0
+torch>=2.2.0
+torchvision>=0.17.0
+
+# Optional, only needed on NVIDIA Jetson / dGPU edge boxes for TensorRT export & inference
+# tensorrt>=8.6.0
+# pycuda>=2024.1
