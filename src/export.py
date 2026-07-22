@@ -17,3 +17,36 @@ def parse_args():
     p.add_argument("--workspace", type=int, default=4, help="TensorRT builder workspace, GB")
     p.add_argument("--batch", type=int, default=1, help="Fixed batch size baked into the export")
     return p.parse_args()
+
+
+def main():
+    args = parse_args()
+
+    if not Path(args.weights).exists():
+        raise FileNotFoundError(f"Weights not found: {args.weights}")
+
+    model = YOLO(args.weights)
+
+    kwargs = dict(
+        format=args.format,
+        imgsz=args.imgsz,
+        half=args.half,
+        dynamic=args.dynamic,
+        simplify=args.simplify,
+        batch=args.batch,
+    )
+    if args.format == "engine":
+        kwargs["workspace"] = args.workspace
+        kwargs["int8"] = args.int8
+    if args.format == "openvino":
+        kwargs["int8"] = args.int8
+
+    exported_path = model.export(**kwargs)
+
+    print(f"\nExported model: {exported_path}")
+    print("Sanity-check it with scripts/benchmark_fps.py before wiring it into the "
+          "production inference pipeline -- export flags (half/int8/imgsz) trade "
+          "accuracy for speed and should be validated on a held-out set.")
+
+    if __name__ == "__main__":
+        main()
