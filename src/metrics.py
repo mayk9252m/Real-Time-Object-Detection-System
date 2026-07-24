@@ -42,4 +42,32 @@ class EscapeRateCalculator:
     """
     Compares a ground-truth defect manifest against the model's detection log
     to compute defect escape rate over some batch/shift/day.
+
+    ground_truth_ids: iterable of unique part/unit IDs known (via QA audit,
+            downstream inspection, or customer return) to actually be defective.
+        detected_ids: iterable of unique part/unit IDs the model flagged as defective.
+    
+        Both should key off the same unit identifier (e.g. serial number, barcode,
+        or timestamp+station bucket) -- wiring that join is specific to your MES,
+        so this is intentionally left as plain ID sets rather than parsing a fixed format.
     """
+
+    @staticmethod
+    def compute(ground_truth_ids, detected_ids) -> EscapeRateResult:
+        gt = set(ground_truth_ids)
+        detected = set(detected_ids)
+    
+        caught = gt & detected
+        escaped = gt - detected
+    
+        total = len(gt)
+        n_caught = len(caught)
+        n_escaped = len(escaped)
+        rate = (n_escaped / total) if total > 0 else 0.0
+    
+        return EscapeRateResult(
+            total_ground_truth_defects=total,
+            caught_by_model=n_caught,
+            escaped=n_escaped,
+            escape_rate=rate,
+            )
