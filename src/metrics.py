@@ -71,3 +71,13 @@ class EscapeRateCalculator:
             escaped=n_escaped,
             escape_rate=rate,
             )
+
+def compare_to_baseline(current: EscapeRateResult, baseline_escape_rate: float) -> float:
+    """Returns % reduction in escape rate vs. a baseline (e.g. prior manual-inspection rate).
+
+    Example: baseline_escape_rate=0.35, current.escape_rate=0.077 -> ~78% reduction,
+    which is the kind of before/after comparison worth tracking per production line.
+    """
+    if baseline_escape_rate <= 0:
+        raise ValueError("baseline_escape_rate must be > 0")
+    return (baseline_escape_rate - current.escape_rate) / baseline_escape_rate * 100.0
