@@ -40,3 +40,11 @@ def main():
     mean_latency_ms = latencies.mean() * 1000
     p99_latency_ms = np.percentile(latencies, 99) * 1000
     throughput_fps = args.batch / latencies.mean()
+
+    print("\n--- Results ---")
+    print(f"Mean latency:  {mean_latency_ms:.2f} ms")
+    print(f"P99 latency:   {p99_latency_ms:.2f} ms")
+    print(f"Throughput:    {throughput_fps:.1f} FPS")
+    target = 60
+    verdict = "MEETS" if throughput_fps >= target else "BELOW"
+    print(f"Target:        {target} FPS -> {verdict} target")
